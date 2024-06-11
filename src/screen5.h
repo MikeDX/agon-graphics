@@ -8,6 +8,6 @@
 void screen5_init(void);
 int screen5_update(void);
 void screen5_draw(void);
-
+void screen5_exit(void);
 #endif /* SCREEN3_H */
 

@@ -9,5 +9,6 @@ void screen1_init(void);
 int screen1_update(void);
 void screen1_draw(void);
 
+void screen1_exit(void);
 #endif /* SCREEN1_H */
 

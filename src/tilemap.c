@@ -42,13 +42,20 @@ void tilemap_load(char *map_def, tilemap *map)
         ncotb_header header;
         bitmap_load_result res = load_bitmap_into_buffer(map->bitmap_start_id+tile_id,
             filename, &header);
+        if (res == MALLOC_FAIL) {
+            printf ("Failed to allocate memory for %s\n", filename);
+        }
         if (res != SUCCESS) {
             printf ("Failed to load %s\n", filename);
+
+            // we should probably exit more gracefully here
             exit(1);
             return;
         }
         assign_buffer_to_bitmap(map->bitmap_start_id+tile_id,RGBA2222,header.width,header.height);
         vdp_plot_bitmap(map->bitmap_start_id+tile_id, 0,map->tile_height);
+        free(filename);
+
     }
 
     // Now allocate RAM for the tilemap itself
@@ -56,6 +63,7 @@ void tilemap_load(char *map_def, tilemap *map)
 
     // And read that in
     mos_fread(file, (char *)map->map_data, sizeof(uint16_t) * map->map_width * map->map_height);
+    mos_fclose(file);
 }
 
 // For now only allow drawing from a starting x position, not a y position too.

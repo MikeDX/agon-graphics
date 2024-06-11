@@ -86,3 +86,8 @@ void screen6_draw(void) {
     waitvblank();
 }
 
+void screen6_exit(void) {
+    printf ("Freeing tiles, please wait!");
+    free(map1.map_data);
+    printf ("Done!\n");
+}

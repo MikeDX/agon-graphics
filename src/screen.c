@@ -10,6 +10,7 @@ struct Screen {
     void (*init)(void);
     int (*update)(void);
     void (*draw)(void);
+    void (*exit)(void);
     // Add any other screen-specific functions or data here
 };
 
@@ -18,7 +19,7 @@ Screen *screens[MAX_SCREENS];
 int num_screens = 0;
 int current_screen_index = 0;
 // Function to define screen
-void define_screen(void (*init)(void), int (*update)(void), void (*draw)(void)) {
+void define_screen(void (*init)(void), int (*update)(void), void (*draw)(void), void (*exit)(void)) {
     // Check if there's still space in the array
     if (num_screens < MAX_SCREENS) {
         // Create the Screen struct
@@ -27,6 +28,7 @@ void define_screen(void (*init)(void), int (*update)(void), void (*draw)(void)) 
             new_screen->init = init;
             new_screen->update = update;
             new_screen->draw = draw;
+            new_screen->exit = exit;
 
             // Add the new screen to the array
             screens[num_screens++] = new_screen;
@@ -37,6 +39,14 @@ void define_screen(void (*init)(void), int (*update)(void), void (*draw)(void)) 
 void set_current_screen(int screen_id)
 {
     current_screen_index = screen_id;
+}
+
+void free_screens(void) {
+    for(int i = 0; i > num_screens; i++) {
+        screens[i]->exit();
+        free(screens[i]);
+    }
+
 }
 
 // Function to execute the next screen based on the current screen's update function

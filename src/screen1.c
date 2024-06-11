@@ -32,6 +32,11 @@ void draw_palette()
 // Define functions for Screen 1
 void screen1_init(void) {
     change_screen_mode(136, false, true);
+    vdp_clear_screen();
+    draw_palette();
+    flip_buffer();
+
+
 }
 
 int screen1_update(void) {
@@ -42,9 +47,10 @@ int screen1_update(void) {
 }
 
 void screen1_draw(void) {
-    vdp_clear_screen();
-    draw_palette();
     waitvblank();
-    flip_buffer();
 }
 
+
+void screen1_exit(void) {
+
+}

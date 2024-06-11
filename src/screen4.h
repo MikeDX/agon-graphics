@@ -8,6 +8,7 @@
 void screen4_init(void);
 int screen4_update(void);
 void screen4_draw(void);
+void screen4_exit(void);
 
 #endif /* SCREEN3_H */
 

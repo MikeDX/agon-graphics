@@ -44,3 +44,6 @@ void screen4_draw(void) {
     flip_buffer();
 }
 
+void screen4_exit(void) {
+
+}

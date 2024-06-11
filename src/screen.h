@@ -16,8 +16,9 @@ extern volatile SYSVAR *sv;
 
 // Function prototypes for screen-related functions
 void set_current_screen(int screen_id);
-void define_screen(void (*init)(void), int (*update)(void), void (*draw)(void)); 
+void define_screen(void (*init)(void), int (*update)(void), void (*draw)(void), void (*exit)(void)); 
 void run_screens(void);
+void free_screens(void);
 void change_screen_mode(uint8_t mode, uint8_t enable_cursor, uint8_t logical_screen);
 #endif /* SCREEN_H */
 

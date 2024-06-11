@@ -36,6 +36,8 @@ void load_font_def(char *font_def, font *font)
 
     printf ("Read %s which is %dx%d and contains %d chars, starting at ID %d\n",
             font->font_name, font->char_width, font->char_height, font->char_count, font->start_bitmap_id);
+    free(font->font_name);
+    mos_fclose(file);
 }
 
 uint8_t bm_load_font(char *font_def, font *font)
@@ -59,6 +61,9 @@ uint8_t bm_load_font(char *font_def, font *font)
 		snprintf(fontname, path_length, "%s_%03d.222", basename, i);
         printf ("Loading %s\n", fontname);
 		res = load_bitmap_into_buffer(font->start_bitmap_id + i, fontname, &image_header);
+        if (res == MALLOC_FAIL) {
+            printf ("Failed to allocate memory\n");
+        }
 		if (res != SUCCESS) {
 			printf ("Failed to load %s\n", fontname);
 			return 1;
@@ -66,7 +71,8 @@ uint8_t bm_load_font(char *font_def, font *font)
 		assign_buffer_to_bitmap(font->start_bitmap_id + i,RGBA2222,image_header.width,image_header.height);
                 vdp_plot_bitmap(font->start_bitmap_id + i, 0,image_header.height);
 	}
-
+    free(basename);
+    free(fontname);
     return 0;
 }
 

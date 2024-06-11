@@ -90,3 +90,6 @@ void screen3_draw(void) {
     flip_buffer();
 }
 
+void screen3_exit(void) {
+
+}

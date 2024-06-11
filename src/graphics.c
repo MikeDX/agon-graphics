@@ -124,6 +124,7 @@ bitmap_load_result load_bitmap_into_buffer(uint16_t buffer_id, char *filename, n
 //        }
     }
     mos_fclose(file);
+    free(buf);
     return SUCCESS;
 }
 

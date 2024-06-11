@@ -102,3 +102,7 @@ void screen2_draw(void) {
     flip_buffer();
 }
 
+
+void screen2_exit(void) {
+
+}

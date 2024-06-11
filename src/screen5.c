@@ -16,12 +16,38 @@ typedef struct Sprite {
 Sprite logos[LOGO_COUNT];
 static font my_font;
 Point origin;
+float t = 0;
+
+const char *scrolltext = "HELLO WORLD! THIS IS A TEST OF THE SCROLLING TEXT ROUTINE. IT SHOULD SCROLL AND LOOP!     ";
+Point helloText;
+vector2 textVect;
+int xoff;
+
+#define SIN_TABLE_SIZE 360
+int sin_table[SIN_TABLE_SIZE];
+int sin_use[SIN_TABLE_SIZE];
+
+void generate_sin_table() {
+    for (int i = 0; i < SIN_TABLE_SIZE; i++) {
+        double angle = i * (2 * M_PI / SIN_TABLE_SIZE);
+        sin_table[i] = (int)((double)sin(angle) * 50);
+    }
+}
 
 void screen5_init(void) {
     change_screen_mode(136, false, true);
+    memset(sin_use, 0, sizeof(sin_use));
+    t = 0;
+    helloText = (Point){SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    textVect = (vector2){4,-6};
+    xoff = SCREEN_WIDTH;
 
     ncotb_header header;
     bitmap_load_result res = load_bitmap_into_buffer(1, "images/ncot-logo.222", &header);
+    if (res == MALLOC_FAIL) {
+        printf ("Failed to allocate memory\n");
+    }
+
     if (res != SUCCESS) {
         printf ("Failed to load %s\n", "images/ncot-logo.222");
         return;
@@ -45,9 +71,9 @@ void screen5_init(void) {
     bm_load_font("fonts/08X08-F5/08X08-F5.fon", &my_font);
     origin.x = 0;
     origin.y = 0;
+    generate_sin_table();
 }
 
-float t = 0;
 
 int screen5_update(void) {
     t+= 0.01;
@@ -65,20 +91,26 @@ int screen5_update(void) {
     return -1; // Continue with the current screen
 }
 
-char *scrolltext = "HELLO WORLD! THIS IS A TEST OF THE SCROLLING TEXT ROUTINE. IT SHOULD SCROLL AND LOOP!     ";
-Point helloText = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-vector2 textVect = {4,-6};
-int xoff = SCREEN_WIDTH;
+
+
+
 void screen5_draw(void) {
     vdp_clear_screen();
     for (size_t i = 0; i < strlen(scrolltext); i++) {
-        int x = xoff+(i*32);
-        int y = SCREEN_WIDTH / 2 + (sin(x * 0.02) * 50);
-        bm_put_char(&my_font, x,y, scrolltext[i]);
+        int x = xoff + (i * 32);
+        if (x > -16 && x < SCREEN_WIDTH + 16) {
+            int angle = ((int)(x * 1.145)) % SIN_TABLE_SIZE;
+            int y = SCREEN_WIDTH / 2 + sin_table[angle];
+            bm_put_char(&my_font, x, y, scrolltext[i]);
+        }
+
+        if (x > SCREEN_WIDTH) {
+            break;
+        }
     }
     bm_printf(&my_font, helloText.x,helloText.y, "HELLO WORLD!");
     for (int i = 0; i < LOGO_COUNT; i++) {
-        vdp_plot_bitmap(logos[i].bitmap_id, logos[i].position.x,logos[i].position.y);
+       vdp_plot_bitmap(logos[i].bitmap_id, logos[i].position.x,logos[i].position.y);
     }
     xoff -= 16;
     if (xoff < (int)(-32*strlen(scrolltext))) xoff = SCREEN_WIDTH;
@@ -91,3 +123,5 @@ void screen5_draw(void) {
     flip_buffer();
 }
 
+void screen5_exit(void) {
+}
